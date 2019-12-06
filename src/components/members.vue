@@ -5,7 +5,7 @@
     <button 
       type="button" 
       :disabled="isValidateDisabled" 
-      @click="clickMember"
+      @click="addMember"
       class="button is-rounded"
       style="margin: 15px 0px 13px;"
     >
@@ -52,13 +52,16 @@ export default {
       prenom: '',
       nom: '',
       idCount: 0,
-      memberList: []
     };
   },
   computed: {
     // Permet de savoir si un prénom a été entré, sinon la propriété "disabled" du bouton est en "true"
     isValidateDisabled() {
       return this.prenom.length === 0;
+    },
+    // Import de la memberList pour pouvoir listes tous les membres
+    memberList() {
+      return this.$store.state.memberList;
     }
   },
   watch: {
@@ -72,15 +75,18 @@ export default {
       this.prenom = '';
       this.nom = '';
     },
-    // Push l'objet avec prénom nom du membre dans l'array memberList, emit l'array
-    clickMember() {
-      this.memberList.push({ prenom: this.prenom, nom: this.nom, id: this.idCount++ });
+    // Ajoute un membre à la memberList du store
+    addMember() {
+      this.$store.commit('addMember', {
+        member: { prenom: this.prenom, nom: this.nom, id: this.idCount++ }
+      });
       this.reset();
-      this.$emit('click-on-send', this.memberList);
     },
-    // Supprime un membre quand on clique sur "Supprimer"
+    // Supprime un membre de la memberList du store quand on clique sur "Supprimer"
     deleteMember(index) {
-      this.memberList.splice(index, 1);
+      this.$store.commit('deleteMember', {
+        index
+      });
     }
   },
 }

@@ -14,7 +14,8 @@
     "sass-loader": "^8.0.0",
     "vue": "^2.6.10",
     "vue-custom-datepicker": "^1.1.6",
-    "vuejs-datepicker": "^1.6.2"
+    "vuejs-datepicker": "^1.6.2",
+    "vuex": "^3.1.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",

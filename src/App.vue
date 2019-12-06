@@ -9,11 +9,10 @@
       <h1>Bienvenue dans la génération de random coffees</h1>
       <!-- Gère la liste des membres -->
       <members
-        @click-on-send="generateParentMemberList"
         class="column is-half is-offset-one-quarter"
         >
       </members>
-      <div v-if="parentMemberList.length > 1" class="container">
+      <div v-if="memberList.length > 1" class="container">
         <!-- Gère la sélection de la date -->
         <div style="display: flex; justify-content: center;">
           <date-picker 
@@ -22,20 +21,25 @@
             :placeholder="datePickerPlaceholder"
             v-model="datePicked"  
             @selected="dateSelected = true"
+            @input="setDate"
           >
           </date-picker>
         </div>
-        <div v-if="new Date(datePicked) < new Date().setDate(new Date().getDate() - 3)">
+        <button type="button" 
+          v-if="!isInThePast"
+          :disabled="isReadyToDisplay || !dateSelected" 
+          @click="setIsReadyToDisplay"
+        >
+        Générer le calendrier de RandomCoffees
+        </button>
+        <div v-if="isInThePast">
           Hey Doc ! On irait pas faire un Random Coffee dans le passé ? Non Marty, pas cette fois ...
         </div>
       </div>
     </div>
     <!-- Génère les randomcoffees avec la date associée -->
     <div class="column second-column">
-      <display-random-coffees 
-        v-if="parentMemberList.length > 1 && dateSelected && new Date(datePicked) > new Date().setDate(new Date().getDate() - 3)"
-        :date-picked="datePicked"
-        :child-member-list="parentMemberList"
+      <display-random-coffees
       >
       </display-random-coffees>
     </div>
@@ -64,10 +68,19 @@ export default {
       fr: fr,
       dateSelected: false,
       datePicked:'',
-      parentMemberList: []
     };
   },
   computed: {
+    // On importe la memberList pour checker sa longueur dans le v-if du display-random-coffee
+    memberList() {
+      return this.$store.state.memberList;
+    },
+    isReadyToDisplay() {
+      return this.$store.state.isReadyToDisplay;
+    },
+    isInThePast() {
+      return new Date(this.datePicked) < new Date().setDate(new Date().getDate() - 3);
+    }
   },
   watch: {
   },
@@ -76,9 +89,14 @@ export default {
   created() {
   },
   methods: {
-    // Récupère la liste des membres avec l'emit du composant members
-    generateParentMemberList(memberList) {
-      this.parentMemberList = memberList;
+    // Méthode qui envoie la date choisie dans le store à chaque changement d'input
+    setDate() {
+      this.$store.commit('setDate', {
+        datePicked: this.datePicked
+      });
+    },
+    setIsReadyToDisplay () {
+      this.$store.commit('setIsReadyToDisplay', true);
     }
   },
 };

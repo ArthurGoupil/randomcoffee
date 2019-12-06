@@ -1,7 +1,6 @@
 <template>
   <div>
     <!-- Affiche tous les éléments de randomCoffeesList (date et matchs de chaque journée) quand on clique sur le bouton -->
-    <button type="button" @click="getCleanCalendar">Générer le calendrier de RandomCoffees</button>
     <ul class="three-columns-ul" style="text-align: center; color: #302E2E">
       <transition-group name="list" tag="p">
         <li
@@ -26,6 +25,7 @@
 <script>
 import moment from 'moment'
 import { match } from 'minimatch';
+import { stringify } from 'querystring';
 moment.locale('fr')
 
 export default {
@@ -34,30 +34,42 @@ export default {
   },
 
   props: {
-    // date choisie dans le date picker
-    datePicked: {
-      type: Date,
-      required: true
-    },
-    // liste des membres e.g. [{ nom: 'Goupil', prenom: 'Arthur' }]
-    childMemberList: {
-      type: Array,
-      required: true
-    }
   },
 
   data() {
     return {
       pairMemberList: [],
       weekRandomCoffeesPerDay: [],
-      randomCoffeesList: []
+      randomCoffeesList: [],
+      memberListCopy: []
     }
   },
 
   computed: {
+    // Import de la memberList 
+    memberList() {
+      return this.$store.state.memberList;
+    },
+    datePicked() {
+      return this.$store.state.datePicked;
+    },
+    isReadyToDisplay() {
+      return this.$store.state.isReadyToDisplay;
+    }
   },
 
   watch: {
+    memberList() {  
+      this.memberListCopy = [];
+      this.memberList.forEach(member => {
+        this.memberListCopy.push(member);
+      });
+    },
+    isReadyToDisplay() {  
+      if (this.isReadyToDisplay === true) {
+        this.getCleanCalendar();
+      }
+    }
   },
 
   mounted() {
@@ -126,8 +138,8 @@ export default {
     // Permet de remplir l'array randomCoffeesList avec les bonnes informations (date et matchs pour chaque journée)
     getCleanCalendar() {
       this.resetArrays();
-      const shuffledChildMemberList = this.copyAndShuffleArray(this.childMemberList);
-      this.getEvenLengthArrayWithIds(shuffledChildMemberList, this.pairMemberList);
+      const shuffledMemberListCopy = this.copyAndShuffleArray(this.memberListCopy);
+      this.getEvenLengthArrayWithIds(shuffledMemberListCopy, this.pairMemberList);
       const numberOfDays = this.pairMemberList.length - 1
       const numberOfRcsPerDay = this.pairMemberList.length / 2
       for (let i = 0; i < numberOfDays; i++) {
