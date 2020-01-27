@@ -47,7 +47,7 @@
             class="button is-primary is-rounded"
             style="margin: 15px 0px 13px;"
           >
-            Générer le calendrier de RandomCoffees
+            Générer le calendrier de Random Coffees
           </button>
         </div>
         <div
