@@ -38,7 +38,7 @@
           >
           </date-picker>
         </div>
-        <div class="has-text-centered" style="background: #009191;">
+        <div class="has-text-centered" style="background: none;">
           <button
             type="button"
             v-if="!isInThePast"
