@@ -6,7 +6,7 @@
       class="centered"
       style="margin-top: 1%;"
       src="../../public/coffee.gif"
-      alt="Back to the Future"
+      alt="Coffee orgie"
     />
     <ul style="text-align: center; color: #302E2E">
       <transition-group name="list" tag="p">

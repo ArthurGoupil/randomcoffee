@@ -15,6 +15,7 @@
       </head>
       <img
         class="centered"
+        style="width: 300px;"
         src="../public/logo-mys-white.png"
         alt="Logo MySezame white"
       />
