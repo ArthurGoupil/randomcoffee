@@ -1,20 +1,25 @@
 <template>
   <div>
     <!-- Affiche tous les éléments de randomCoffeesList (date et matchs de chaque journée) quand on clique sur le bouton -->
-    <ul class="three-columns-ul" style="text-align: center; color: #302E2E">
+    <img
+      v-if="this.isReadyToDisplay === true"
+      class="centered"
+      style="margin-top: 1%;"
+      src="../../public/coffee.gif"
+      alt="Back to the Future"
+    />
+    <ul style="text-align: center; color: #302E2E">
       <transition-group name="list" tag="p">
         <li
           v-for="(elements, index) in randomCoffeesList"
           :key="index"
           class="list-item"
         >
-        <strong>Semaine du {{ elements.date }}</strong>
+          <strong>Semaine du {{ elements.date }}</strong>
           <ul>
-            <li
-              v-for="(match, indexMatch) in elements.rc"
-              :key="indexMatch"
-            >
-              {{ match[0].prenom }} {{ match[0].nom }} ☕ {{ match[1].prenom }} {{ match[1].nom }}
+            <li v-for="(match, indexMatch) in elements.rc" :key="indexMatch">
+              {{ match[0].prenom }} {{ match[0].nom }} ☕ {{ match[1].prenom }}
+              {{ match[1].nom }}
             </li>
           </ul>
         </li>
@@ -23,18 +28,15 @@
   </div>
 </template>
 <script>
-import moment from 'moment'
+import moment from 'moment';
 import { match } from 'minimatch';
 import { stringify } from 'querystring';
-moment.locale('fr')
+moment.locale('fr');
 
 export default {
-  
-  components: {
-  },
+  components: {},
 
-  props: {
-  },
+  props: {},
 
   data() {
     return {
@@ -42,11 +44,11 @@ export default {
       weekRandomCoffeesPerDay: [],
       randomCoffeesList: [],
       memberListCopy: []
-    }
+    };
   },
 
   computed: {
-    // Import de la memberList 
+    // Import de la memberList
     memberList() {
       return this.$store.state.memberList;
     },
@@ -59,27 +61,24 @@ export default {
   },
 
   watch: {
-    memberList() {  
+    memberList() {
       this.memberListCopy = [];
       this.memberList.forEach(member => {
         this.memberListCopy.push(member);
       });
     },
-    isReadyToDisplay() {  
+    isReadyToDisplay() {
       if (this.isReadyToDisplay === true) {
         this.getCleanCalendar();
       }
     }
   },
 
-  mounted() {
-  },
+  mounted() {},
 
-  created() {
-  },
+  created() {},
 
   methods: {
-
     // Donne un id à chaque élément du tableau égal à l'index (car id plus facilement manipulable que l'index)
     giveIdsToArrayElements(inputArray) {
       inputArray.forEach((item, index) => {
@@ -89,18 +88,18 @@ export default {
 
     // Remplit un array vide (qui doit être initialisé parallèlement) avec les éléments d'un input array en leur attribuant une id et en ajoutant un dernier membre "Exempt" si impair
     getEvenLengthArrayWithIds(inputArray, outputArray) {
-      inputArray.forEach (item => {
+      inputArray.forEach(item => {
         outputArray.push(item);
       });
       this.giveIdsToArrayElements(outputArray);
       if (outputArray.length % 2 === 1) {
-        outputArray.push({prenom: 'Exempt', id: outputArray.length});
-      } 
+        outputArray.push({ prenom: 'Exempt', id: outputArray.length });
+      }
     },
 
     // Permet de faire un tirage sans remise : renvoie un élément aleatoire dans une liste et supprime l'élément du bucket
     takeRandomElementFromArray(bucketArray) {
-      let randomIndex = Math.floor(Math.random()*bucketArray.length) ;
+      let randomIndex = Math.floor(Math.random() * bucketArray.length);
       return bucketArray.splice(randomIndex, 1)[0];
     },
 
@@ -128,7 +127,7 @@ export default {
         }
       });
     },
-  
+
     // (Ré)initialise les arrays en vue de la génération des random coffees
     resetArrays() {
       this.randomCoffeesList = [];
@@ -138,27 +137,40 @@ export default {
     // Permet de remplir l'array randomCoffeesList avec les bonnes informations (date et matchs pour chaque journée)
     getCleanCalendar() {
       this.resetArrays();
-      const shuffledMemberListCopy = this.copyAndShuffleArray(this.memberListCopy);
-      this.getEvenLengthArrayWithIds(shuffledMemberListCopy, this.pairMemberList);
-      const numberOfDays = this.pairMemberList.length - 1
-      const numberOfRcsPerDay = this.pairMemberList.length / 2
+      const shuffledMemberListCopy = this.copyAndShuffleArray(
+        this.memberListCopy
+      );
+      this.getEvenLengthArrayWithIds(
+        shuffledMemberListCopy,
+        this.pairMemberList
+      );
+      const numberOfDays = this.pairMemberList.length - 1;
+      const numberOfRcsPerDay = this.pairMemberList.length / 2;
       for (let i = 0; i < numberOfDays; i++) {
         this.weekRandomCoffeesPerDay[i] = [];
         for (let j = 0; j < numberOfRcsPerDay; j++) {
           this.weekRandomCoffeesPerDay[i].unshift([
-            this.pairMemberList[this.pairMemberList.findIndex(element => element.id === j)], 
-            this.pairMemberList[this.pairMemberList.findIndex(element => element.id === this.pairMemberList.length - 1 - j)]
+            this.pairMemberList[
+              this.pairMemberList.findIndex(element => element.id === j)
+            ],
+            this.pairMemberList[
+              this.pairMemberList.findIndex(
+                element => element.id === this.pairMemberList.length - 1 - j
+              )
+            ]
           ]);
         }
         this.randomCoffeesList.push({
-          date: moment(this.datePicked).add(7*i, 'days').format("D MMMM YYYY"),
+          date: moment(this.datePicked)
+            .add(7 * i, 'days')
+            .format('D MMMM YYYY'),
           rc: this.weekRandomCoffeesPerDay[i]
         });
         this.rotateIds(this.pairMemberList);
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style>
@@ -167,21 +179,17 @@ export default {
   margin-right: 10px;
   border-bottom: none !important;
 }
-.list-enter-active, .list-leave-active {
+.list-enter-active,
+.list-leave-active {
   transition: all 0.5s;
 }
 .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
   opacity: 0;
   transform: translateY(10px);
 }
-.three-columns-ul {
-  -webkit-column-count: 2; /* Chrome, Safari, Opera */
-  -moz-column-count: 2; /* Firefox */
-  column-count: 2;
-}
 li {
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
   break-inside: avoid;
 }
-</style>  
+</style>
