@@ -10,7 +10,7 @@
   "dependencies": {
     "bulma": "^0.8.0",
     "core-js": "^2.6.5",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "sass-loader": "^8.0.0",
     "vue": "^2.6.10",
     "vue-custom-datepicker": "^1.1.6",
